@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Timora — Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary: #7259ec;
+      --secondary: #c666f7;
+      --accent: #06b6d4;
+    }
+    body { font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    .sidebar-hidden .sidebar { transform: translateX(-100%); }
+    .sidebar { transition: transform .28s ease; }
+    .content-area { transition: margin-left .28s ease; }
+    
+    /* Animated gradient backgrounds */
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .gradient-animate {
+      background: linear-gradient(-45deg, #7259ec, #c666f7, #06b6d4, #8b5cf6);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+    }
+    
+    /* Glass morphism */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 8px 32px 0 rgba(114, 89, 236, 0.12);
+    }
+    
+    /* Hover effects */
+    .hover-lift {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hover-lift:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(114, 89, 236, 0.2);
+    }
+    
+    /* Pulse animation for important elements */
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(114, 89, 236, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(198, 102, 247, 0.6); }
+    }
+    
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    /* Progress bars */
+    .progress-bar {
+      height: 8px;
+      background: linear-gradient(90deg, #7259ec, #c666f7);
+      border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Section full height */
+    .section-card {
+      min-height: calc(100vh - 120px);
+    }
+    
+    @media (max-width: 1024px){ 
+      .sidebar { position: fixed; z-index: 40; height: 100vh; }
+      .section-card { min-height: auto; }
+    }
+    
+    /* Number counter animation */
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .count-up {
+      animation: countUp 0.6s ease-out;
+    }
+    
+    /* Card entrance animation */
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .slide-in-up {
+      animation: slideInUp 0.5s ease-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 text-slate-900">
+
+  <div id="app" class="flex h-screen overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar w-72 bg-white border-r border-gray-200 p-5 shadow-xl">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] flex items-center justify-center text-white font-extrabold shadow-lg pulse-glow">T</div>
+          <div>
+            <div id="ui-username" class="font-semibold text-lg">Guest User</div>
+            <div id="ui-email" class="text-xs text-slate-500">guest@example.com</div>
+          </div>
+        </div>
+        <button id="closeSidebar" class="p-1 text-slate-400 hover:text-slate-700 text-2xl" title="Close sidebar">&times;</button>
+      </div>
+
+      <nav class="space-y-2">
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-300 flex items-center gap-3 active-nav" data-section="overview">
+          <svg class="w-5 h-5 text-[var(--primary)]" viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10zM3 21h8v-6H3v6zM13 21h8V11h-8v10zM13 3v6h8V3h-8z" fill="currentColor"/></svg>
+          <span class="font-medium">Overview</span>
+        </button>
+
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-300 flex items-center gap-3" data-section="pomodoro">
+          <svg class="w-5 h-5 text-rose-500" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="font-medium">Pomodoro</span>
+        </button>
+
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-300 flex items-center gap-3" data-section="planner">
+          <svg class="w-5 h-5 text-indigo-500" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-width="2"/></svg>
+          <span class="font-medium">AI Planner</span>
+        </button>
+
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-300 flex items-center gap-3" data-section="projects">
+          <svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="currentColor" stroke-width="2"/></svg>
+          <span class="font-medium">Projects</span>
+        </button>
+
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-300 flex items-center gap-3" data-section="analytics">
+          <svg class="w-5 h-5 text-violet-500" viewBox="0 0 24 24" fill="none"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/></svg>
+          <span class="font-medium">Analytics</span>
+        </button>
+
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-300 flex items-center gap-3" data-section="settings">
+          <svg class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke="currentColor" stroke-width="2"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2"/></svg>
+          <span class="font-medium">Settings</span>
+        </button>
+      </nav>
+
+      <div class="mt-auto pt-6 border-t border-gray-100">
+        <div class="p-4 rounded-xl bg-gradient-to-br from-purple-50 to-blue-50 mb-3">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-slate-600">Total Coins</span>
+            <svg class="w-5 h-5 text-yellow-500" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+          </div>
+          <div id="ui-coins" class="text-3xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent count-up">1,200</div>
+        </div>
+        <button id="logoutBtn" class="w-full py-3 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <div id="contentWrapper" class="flex-1 content-area overflow-auto bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+      
+      <!-- Top bar -->
+      <div class="sticky top-0 z-30 backdrop-blur-lg bg-white/80 border-b border-gray-200 px-6 py-4 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <button id="openSidebar" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div>
+              <h1 class="text-xl font-bold text-slate-800">Good afternoon! 👋</h1>
+              <p class="text-sm text-slate-500">Let's make today productive</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-50 to-blue-50">
+              <span class="text-sm text-slate-600">Streak: <span class="font-bold text-[var(--primary)]">🔥 3 days</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sections Container -->
+      <div id="sections" class="p-6">
+
+        <!-- OVERVIEW -->
+        <article id="sect-overview" class="section-card slide-in-up">
+          
+          <!-- Hero Stats Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="glass-card rounded-2xl p-6 hover-lift">
+              <div class="flex items-start justify-between mb-4">
+                <div class="p-3 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50">
+                  <svg class="w-6 h-6 text-[var(--primary)]" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/></svg>
+                </div>
+                <span class="text-xs font-semibold text-green-500 bg-green-50 px-2 py-1 rounded-full">+12%</span>
+              </div>
+              <div class="text-3xl font-bold text-slate-800 mb-1 count-up">12<span class="text-lg">h</span></div>
+              <div class="text-sm text-slate-500">Focus Hours</div>
+              <div class="mt-3 bg-slate-100 rounded-full h-2 overflow-hidden">
+                <div class="progress-bar" style="width: 60%"></div>
+              </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 hover-lift">
+              <div class="flex items-start justify-between mb-4">
+                <div class="p-3 rounded-xl bg-gradient-to-br from-orange-100 to-orange-50">
+                  <svg class="w-6 h-6 text-orange-500" viewBox="0 0 24 24" fill="currentColor"><path d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10a5.5 5.5 0 011 5 4 4 0 001 3 6 6 0 003 1c2 0 3.5-1 4-3s1-4.5-.343-6.343z"/></svg>
+                </div>
+                <span class="text-xs font-semibold text-orange-500 bg-orange-50 px-2 py-1 rounded-full">🔥 Hot</span>
+              </div>
+              <div class="text-3xl font-bold text-slate-800 mb-1 count-up">3</div>
+              <div class="text-sm text-slate-500">Day Streak</div>
+              <div class="mt-3 text-xs text-slate-400">Keep it up! Only 4 more days to unlock a reward 🎁</div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 hover-lift">
+              <div class="flex items-start justify-between mb-4">
+                <div class="p-3 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50">
+                  <svg class="w-6 h-6 text-blue-500" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="currentColor" stroke-width="2"/></svg>
+                </div>
+                <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-full">5 Active</span>
+              </div>
+              <div class="text-3xl font-bold text-slate-800 mb-1 count-up">5</div>
+              <div class="text-sm text-slate-500">Pending Tasks</div>
+              <div class="mt-3 text-xs text-blue-600 font-medium cursor-pointer hover:underline">View all tasks →</div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 hover-lift">
+              <div class="flex items-start justify-between mb-4">
+                <div class="p-3 rounded-xl bg-gradient-to-br from-yellow-100 to-yellow-50">
+                  <svg class="w-6 h-6 text-yellow-600" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                </div>
+                <span class="text-xs font-semibold text-green-500 bg-green-50 px-2 py-1 rounded-full">+50</span>
+              </div>
+              <div class="text-3xl font-bold text-slate-800 mb-1 count-up">1,200</div>
+              <div class="text-sm text-slate-500">Total Coins</div>
+              <div class="mt-3 text-xs text-slate-400">Spend in merch store</div>
+            </div>
+          </div>
+
+          <!-- Activity Grid -->
+          <div class="grid lg:grid-cols-3 gap-6">
+            
+            <!-- Recent Activity -->
+            <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+              <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-bold text-slate-800">Recent Activity</h3>
+                <button class="text-sm text-[var(--primary)] font-medium hover:underline">View all</button>
+              </div>
+              
+              <div class="space-y-4">
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100">
+                  <div class="p-2 rounded-lg bg-green-500 text-white">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-semibold text-slate-800">Focus Session Completed</div>
+                    <div class="text-sm text-slate-500">25 minutes • Math Revision</div>
+                  </div>
+                  <div class="text-sm font-medium text-green-600">+10 coins</div>
+                </div>
+
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100">
+                  <div class="p-2 rounded-lg bg-purple-500 text-white">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-semibold text-slate-800">New Achievement Unlocked</div>
+                    <div class="text-sm text-slate-500">Early Bird - Start session before 8 AM</div>
+                  </div>
+                  <div class="text-2xl">🏆</div>
+                </div>
+
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-100">
+                  <div class="p-2 rounded-lg bg-blue-500 text-white">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/></svg>
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-semibold text-slate-800">Task Completed</div>
+                    <div class="text-sm text-slate-500">Integration practice problems</div>
+                  </div>
+                  <div class="text-sm text-slate-400">2h ago</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="glass-card rounded-2xl p-6">
+              <h3 class="text-lg font-bold text-slate-800 mb-6">Quick Actions</h3>
+              
+              <div class="space-y-3">
+                <button class="w-full p-4 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-between">
+                  <span>Start Pomodoro</span>
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" fill="currentColor"/></svg>
+                </button>
+
+                <button class="w-full p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-[var(--primary)] font-semibold transition-all duration-300 flex items-center justify-between group">
+                  <span>Create Task</span>
+                  <svg class="w-5 h-5 text-slate-400 group-hover:text-[var(--primary)] transition-colors" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+
+                <button class="w-full p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-[var(--primary)] font-semibold transition-all duration-300 flex items-center justify-between group">
+                  <span>Generate Plan</span>
+                  <svg class="w-5 h-5 text-slate-400 group-hover:text-[var(--primary)] transition-colors" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2"/></svg>
+                </button>
+              </div>
+
+              <div class="mt-6 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+                <div class="flex items-center gap-2 mb-2">
+                  <svg class="w-5 h-5 text-amber-600" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <span class="font-semibold text-amber-800">Pro Tip</span>
+                </div>
+                <p class="text-sm text-amber-700">Complete 4 focus sessions today to earn a bonus 50 coins!</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- POMODORO -->
+        <article id="sect-pomodoro" class="hidden section-card slide-in-up">
+          <div class="glass-card rounded-3xl p-8 max-w-6xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12">
+              
+              <!-- Timer Section -->
+              <div class="flex flex-col items-center justify-center">
+                <div class="relative">
+                  <!-- Circular Progress -->
+                  <svg class="transform -rotate-90" width="320" height="320">
+                    <circle cx="160" cy="160" r="140" stroke="#e5e7eb" stroke-width="12" fill="none"/>
+                    <circle cx="160" cy="160" r="140" stroke="url(#gradient)" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="880" stroke-dashoffset="220"/>
+                    <defs>
+                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#7259ec"/>
+                        <stop offset="100%" style="stop-color:#c666f7"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  
+                  <!-- Timer Display -->
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="text-center">
+                      <div id="pom-timer" class="text-7xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent">25:00</div>
+                      <div class="mt-2 text-slate-500 font-medium">Focus Time</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="mt-12 flex items-center gap-4">
+                  <button id="pomStart" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105">
+                    Start Session
+                  </button>
+                  <button id="pomPause" class="p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-[var(--primary)] transition-all duration-300">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+                  </button>
+                  <button id="pomReset" class="p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-red-400 transition-all duration-300">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  </button>
+                </div>
+
+                <!-- Mode Selector -->
+                <div class="mt-8 flex gap-3">
+                  <button data-mode="focus" class="pom-mode px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-semibold shadow-lg">Focus (25m)</button>
+                  <button data-mode="short" class="pom-mode px-6 py-3 rounded-xl bg-white border-2 border-slate-200 font-semibold hover:border-[var(--primary)] transition-all">Short (5m)</button>
+                  <button data-mode="long" class="pom-mode px-6 py-3 rounded-xl bg-white border-2 border-slate-200 font-semibold hover:border-[var(--primary)] transition-all">Long (15m)</button>
+                </div>
+              </div>
+
+              <!-- Stats & Info -->
+              <div class="space-y-6">
+                <div>
+                  <h3 class="text-2xl font-bold text-slate-800 mb-6">Session Stats</h3>
+                  
+                  <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
+                      <div class="text-3xl font-bold text-purple-700 mb-1">0</div>
+                      <div class="text-sm text-purple-600">Sessions Today</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-gradient-to-br from-green-50 to-green-100 border border-green-200">
+                      <div class="text-3xl font-bold text-green-700 mb-1">0h</div>
+                      <div class="text-sm text-green-600">Focus Time</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 rounded-lg bg-blue-500 text-white">
+                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h4 class="font-bold text-slate-800">Power-up Active</h4>
+                  </div>
+                  <p class="text-sm text-slate-600 mb-3">2x coins for the next session!</p>
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-2 bg-white rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-500" style="width: 75%"></div>
+                    </div>
+                    <span class="text-xs font-semibold text-blue-600">3/4</span>
+                  </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-white border-2 border-slate-200">
+                  <h4 class="font-bold text-slate-800 mb-4">Recent Sessions</h4>
+                  <div class="space-y-3" id="pomHistory">
+                    <div class="flex items-center justify-between text-sm">
+                      <div class="flex items-center gap-3">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-slate-600">Focus — 25m</span>
+                      </div>
+                      <span class="text-slate-400">Today, 10:30 AM</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                      <div class="flex items-center gap-3">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-slate-600">Focus — 50m</span>
+                      </div>
+                      <span class="text-slate-400">Yesterday</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                      <div class="flex items-center gap-3">
+                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                        <span class="text-slate-600">Short Break — 5m</span>
+                      </div>
+                      <span class="text-slate-400">2 days ago</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+                  <div class="flex items-center gap-2 mb-3">
+                    <svg class="w-6 h-6 text-amber-600" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                    <span class="text-2xl font-bold text-amber-800" id="ui-coins-small">+10</span>
+                  </div>
+                  <p class="text-sm text-amber-700">Coins earned per completed session</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- PLANNER -->
+        <article id="sect-planner" class="hidden section-card slide-in-up">
+          <div class="max-w-7xl mx-auto">
+            <div class="glass-card rounded-3xl p-8">
+              <div class="flex items-center justify-between mb-8">
+                <div>
+                  <h2 class="text-3xl font-bold text-slate-800 mb-2">AI Study Planner</h2>
+                  <p class="text-slate-500">Generate personalized timetables with AI</p>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200">
+                  <span class="text-sm font-semibold text-purple-700">✨ AI Powered</span>
+                </div>
+              </div>
+
+              <div class="grid lg:grid-cols-3 gap-8">
+                
+                <!-- Input Form -->
+                <div class="glass-card rounded-2xl p-6 border-2 border-purple-100">
+                  <h3 class="font-bold text-slate-800 mb-6">Configure Your Plan</h3>
+                  
+                  <form id="plannerForm" class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-slate-700 mb-2">Subjects</label>
+                      <input id="plannerSubjects" placeholder="Math, Physics, Chemistry..." class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[var(--primary)] focus:ring-2 focus:ring-purple-100 transition-all" />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Hours/Day</label>
+                        <input id="plannerHours" type="number" min="1" max="12" value="3" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[var(--primary)] transition-all" />
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Days</label>
+                        <input id="plannerDays" type="number" min="1" max="30" value="7" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[var(--primary)] transition-all" />
+                      </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" fill="currentColor"/></svg>
+                      <span>Generate Plan</span>
+                    </button>
+                  </form>
+
+                  <div id="plannerResult" class="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-200">
+                    <p class="text-sm text-blue-700">Click generate to create your custom study plan ✨</p>
+                  </div>
+                </div>
+
+                <!-- Timetable Preview -->
+                <div class="lg:col-span-2">
+                  <div class="flex items-center justify-between mb-6">
+                    <h3 class="font-bold text-slate-800 text-xl">Preview — Day 1</h3>
+                    <div class="flex gap-2">
+                      <button class="px-4 py-2 rounded-lg bg-white border-2 border-slate-200 text-sm font-medium hover:border-[var(--primary)] transition-all">
+                        ← Prev
+                      </button>
+                      <button class="px-4 py-2 rounded-lg bg-white border-2 border-slate-200 text-sm font-medium hover:border-[var(--primary)] transition-all">
+                        Next →
+                      </button>
+                    </div>
+                  </div>
+
+                  <div id="timetable" class="grid md:grid-cols-2 gap-4">
+                    <!-- Default blocks -->
+                    <div class="p-6 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 text-white hover-lift shadow-lg">
+                      <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold bg-white/20 px-3 py-1 rounded-full">09:00 - 10:00</span>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                      </div>
+                      <h4 class="text-xl font-bold mb-2">Mathematics</h4>
+                      <p class="text-sm opacity-90 mb-4">Calculus & Integration</p>
+                      <button class="importTaskBtn w-full py-2 rounded-lg bg-white/20 hover:bg-white/30 font-medium transition-all">
+                        Add to Projects →
+                      </button>
+                    </div>
+
+                    <div class="p-6 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white hover-lift shadow-lg">
+                      <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold bg-white/20 px-3 py-1 rounded-full">10:30 - 11:30</span>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                      </div>
+                      <h4 class="text-xl font-bold mb-2">Physics</h4>
+                      <p class="text-sm opacity-90 mb-4">Electromagnetism</p>
+                      <button class="importTaskBtn w-full py-2 rounded-lg bg-white/20 hover:bg-white/30 font-medium transition-all">
+                        Add to Projects →
+                      </button>
+                    </div>
+
+                    <div class="p-6 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 text-white hover-lift shadow-lg">
+                      <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold bg-white/20 px-3 py-1 rounded-full">14:00 - 15:00</span>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                      </div>
+                      <h4 class="text-xl font-bold mb-2">Chemistry</h4>
+                      <p class="text-sm opacity-90 mb-4">Organic Reactions</p>
+                      <button class="importTaskBtn w-full py-2 rounded-lg bg-white/20 hover:bg-white/30 font-medium transition-all">
+                        Add to Projects →
+                      </button>
+                    </div>
+
+                    <div class="p-6 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white hover-lift shadow-lg">
+                      <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold bg-white/20 px-3 py-1 rounded-full">15:30 - 16:30</span>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+                      </div>
+                      <h4 class="text-xl font-bold mb-2">Break Time</h4>
+                      <p class="text-sm opacity-90 mb-4">Relax & Recharge 🧘</p>
+                      <button class="w-full py-2 rounded-lg bg-white/20 font-medium opacity-50 cursor-not-allowed">
+                        Break Period
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- PROJECTS -->
+        <article id="sect-projects" class="hidden section-card slide-in-up">
+          <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-8">
+              <div>
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">My Projects</h2>
+                <p class="text-slate-500">Organize your study tasks efficiently</p>
+              </div>
+              <button id="newProjectBtn" class="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <span>New Project</span>
+              </button>
+            </div>
+
+            <div id="projectsList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Default project cards -->
+              <div class="glass-card rounded-2xl p-6 hover-lift">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="p-3 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50">
+                    <svg class="w-6 h-6 text-[var(--primary)]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <div class="flex gap-1">
+                    <button class="p-1 hover:bg-slate-100 rounded">
+                      <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke="currentColor" stroke-width="2"/></svg>
+                    </button>
+                    <button class="p-1 hover:bg-red-50 rounded">
+                      <svg class="w-4 h-4 text-red-400" viewBox="0 0 24 24" fill="none"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" stroke-width="2"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Math Revision</h3>
+                <p class="text-sm text-slate-500 mb-4">JEE Advanced preparation</p>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-sm text-slate-600">3 tasks</span>
+                  <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">In Progress</span>
+                </div>
+                <div class="mb-4">
+                  <div class="flex justify-between text-xs text-slate-500 mb-1">
+                    <span>Progress</span>
+                    <span>66%</span>
+                  </div>
+                  <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="progress-bar" style="width: 66%"></div>
+                  </div>
+                </div>
+                <button class="openProjBtn w-full py-2 rounded-lg border-2 border-slate-200 hover:border-[var(--primary)] font-medium transition-all" data-proj="p1">
+                  View Tasks
+                </button>
+              </div>
+
+              <div class="glass-card rounded-2xl p-6 hover-lift">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="p-3 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50">
+                    <svg class="w-6 h-6 text-blue-500" viewBox="0 0 24 24" fill="currentColor"><path d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                  </div>
+                  <div class="flex gap-1">
+                    <button class="p-1 hover:bg-slate-100 rounded">
+                      <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke="currentColor" stroke-width="2"/></svg>
+                    </button>
+                    <button class="p-1 hover:bg-red-50 rounded">
+                      <svg class="w-4 h-4 text-red-400" viewBox="0 0 24 24" fill="none"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" stroke-width="2"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">DSA Practice</h3>
+                <p class="text-sm text-slate-500 mb-4">Data Structures & Algorithms</p>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-sm text-slate-600">5 tasks</span>
+                  <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">Pending</span>
+                </div>
+                <div class="mb-4">
+                  <div class="flex justify-between text-xs text-slate-500 mb-1">
+                    <span>Progress</span>
+                    <span>20%</span>
+                  </div>
+                  <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="progress-bar" style="width: 20%"></div>
+                  </div>
+                </div>
+                <button class="openProjBtn w-full py-2 rounded-lg border-2 border-slate-200 hover:border-[var(--primary)] font-medium transition-all" data-proj="p2">
+                  View Tasks
+                </button>
+              </div>
+
+              <!-- Add new project card -->
+              <button class="glass-card rounded-2xl p-6 border-2 border-dashed border-slate-300 hover:border-[var(--primary)] transition-all duration-300 flex flex-col items-center justify-center min-h-[280px] group">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <svg class="w-8 h-8 text-[var(--primary)]" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <span class="font-semibold text-slate-600 group-hover:text-[var(--primary)] transition-colors">Create New Project</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- ANALYTICS -->
+        <article id="sect-analytics" class="hidden section-card slide-in-up">
+          <div class="max-w-7xl mx-auto">
+            <div class="mb-8">
+              <h2 class="text-3xl font-bold text-slate-800 mb-2">Analytics Dashboard</h2>
+              <p class="text-slate-500">Track your productivity and progress</p>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <div class="glass-card rounded-2xl p-6">
+                <div class="text-sm text-slate-500 mb-2">Weekly Hours</div>
+                <div id="weeklyHours" class="text-3xl font-bold text-slate-800 mb-1">8h</div>
+                <div class="text-xs text-green-600 font-medium">↑ 15% vs last week</div>
+              </div>
+
+              <div class="glass-card rounded-2xl p-6">
+                <div class="text-sm text-slate-500 mb-2">Avg Session</div>
+                <div class="text-3xl font-bold text-slate-800 mb-1">42m</div>
+                <div class="text-xs text-green-600 font-medium">↑ 8% improvement</div>
+              </div>
+
+              <div class="glass-card rounded-2xl p-6">
+                <div class="text-sm text-slate-500 mb-2">Completion Rate</div>
+                <div class="text-3xl font-bold text-slate-800 mb-1">87%</div>
+                <div class="text-xs text-red-500 font-medium">↓ 3% vs last week</div>
+              </div>
+
+              <div class="glass-card rounded-2xl p-6">
+                <div class="text-sm text-slate-500 mb-2">Best Streak</div>
+                <div class="text-3xl font-bold text-slate-800 mb-1">12d</div>
+                <div class="text-xs text-slate-400">Personal record</div>
+              </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid lg:grid-cols-2 gap-6">
+              
+              <!-- Weekly Chart -->
+              <div class="glass-card rounded-2xl p-6">
+                <h3 class="font-bold text-slate-800 mb-6">Weekly Focus Time</h3>
+                <div id="chart" class="flex items-end justify-between h-64 gap-3">
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-gradient-to-t from-[var(--primary)] to-[var(--secondary)] rounded-t-lg hover:scale-105 transition-transform" style="height: 20%"></div>
+                    <span class="text-xs text-slate-500">Mon</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-gradient-to-t from-[var(--primary)] to-[var(--secondary)] rounded-t-lg hover:scale-105 transition-transform" style="height: 40%"></div>
+                    <span class="text-xs text-slate-500">Tue</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-gradient-to-t from-[var(--primary)] to-[var(--secondary)] rounded-t-lg hover:scale-105 transition-transform" style="height: 60%"></div>
+                    <span class="text-xs text-slate-500">Wed</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-gradient-to-t from-[var(--primary)] to-[var(--secondary)] rounded-t-lg hover:scale-105 transition-transform" style="height: 40%"></div>
+                    <span class="text-xs text-slate-500">Thu</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-gradient-to-t from-[var(--primary)] to-[var(--secondary)] rounded-t-lg hover:scale-105 transition-transform" style="height: 20%"></div>
+                    <span class="text-xs text-slate-500">Fri</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-gradient-to-t from-[var(--primary)] to-[var(--secondary)] rounded-t-lg hover:scale-105 transition-transform" style="height: 35%"></div>
+                    <span class="text-xs text-slate-500">Sat</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-gradient-to-t from-[var(--primary)] to-[var(--secondary)] rounded-t-lg hover:scale-105 transition-transform" style="height: 15%"></div>
+                    <span class="text-xs text-slate-500">Sun</span>
+                  </div>
+                </div>
+              </div>
+
+            

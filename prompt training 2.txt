@@ -1,0 +1,251 @@
+I need you to create a comprehensive, beautiful, and modern web-based study planner application with AI integration. Please build this using html5 with TypeScript, Tailwind CSS for styling, and Firebase for backend services. 
+
+TECH STACK REQUIREMENTS:
+Frontend:html5 with javascript
+
+Styling: Tailwind CSS CDN with modern UI components
+
+Backend: Firebase (Authentication, Firestore)
+
+AI Integration: OpenAI API for study planner
+
+Payments: Razorpay integration
+
+Deployment: Vercel ready
+
+CORE FEATURES TO IMPLEMENT:
+1. LANDING PAGE (6 Sections)
+Modern color theme with dopamine-releasing UI
+
+Fixed navigation with smooth scroll to sections
+
+Hamburger menu for mobile with slide-in from right
+
+"Get Started/Login/Sign Up" button in nav
+
+Six sections highlighting all features
+
+2. AUTHENTICATION SYSTEM
+Login Options:
+
+Google OAuth (Firebase)
+
+Email/Password with verification link
+
+Random avatar generation for email signups
+
+Auto-redirect to dashboard after authentication
+
+3. DASHBOARD OVERVIEW
+Initial 10 coins on account creation
+
+Clean, modern layout with all features accessible
+
+4. POMODORO TIMER WITH TO-DO LIST
+Timer Modes:
+
+Focus (25min default)
+
+Short Break (5min default)
+
+Long Break (15min default)
+
+Auto-rotation: Long break after every 4 focus sessions
+
+Pomodoro Settings:
+
+Customizable timer durations
+
+Adjustable session counts before long break
+
+Pomodoro Stats:
+
+Task completion history
+
+Pending tasks tracking
+
+Coin Rewards: 10 coins per completed focus hour
+
+5. AI STUDY PLANNER
+OpenAI API integration for timetable generation
+
+Strict Response Format: Only timetable data, no conversational text
+
+Visual Timetable Blocks:
+
+Color-coded time blocks (e.g., 10-11 AM)
+
+Beautiful, dopamine-releasing UI
+
+Features:
+
+Import to Pomodoro tasks
+
+Auto-start/stop timer settings
+
+PDF download capability
+
+Pre-import editing functionality
+
+AI Teacher - Teaches you topics ypu type or you can choose from your pomodoro tasks.
+
+6. COIN & REWARD SYSTEM
+Daily Login Rewards: Progressive coin system
+
+Lucky Spin: Unlocks after 40 focus hours
+
+Wheel programmed for 5-20 coins (rarely up to 100)
+
+OG users get 30-40 coins monthly
+
+Achievement System:
+
+Study hours milestones (10h, 20h, 50h, 100h+)
+
+Login streaks (20 days, 100 days, etc.)
+
+Water consumption achievements
+
+Task completion milestones
+
+Appropriate coin rewards for each achievement
+
+7. WATER TRACKER
+8 glass visualization (max 3 liters)
+
+Customizable daily water goals
+
+Achievement tracking starting at 20 liters
+
+8. LEADERBOARD & LEAGUES
+League System:
+
+Wood → Stone → Iron → Silver → Gold → Platinum → Diamond
+
+7-day league cycles
+
+Top 3 promotion, others stay
+
+League Rewards: Achievement + coins (10-20 coins)
+
+Countdown timer for league end
+
+9. ANALYTICS DASHBOARD
+Total focus hours
+
+Current streak counter
+
+Progress graphs and charts
+
+Estimated task completion time
+
+Time spent on platform analytics
+
+Completed vs pending tasks overview
+
+10. PROJECTS SECTION
+Folder-based organization for related Pomodoro tasks
+
+Project-specific task grouping
+
+11. MERCHANDISE STORE
+Diary available for 8,000 coins
+
+Address collection and order confirmation
+
+Admin Panel: Order management system
+
+12. SUBSCRIPTION PLANS
+Free Plan (₹0):
+
+Limited AI planner (one-time use)
+
+3-4 Pomodoro tasks maximum
+
+Basic features only
+
+Basic Plan (₹149/month):
+
+AI planner: 3 times/week, daily timetables only
+
+Weekly analytics
+
+Limited feature access
+
+Standard Plan (₹318/month):
+
+AI planner: 5 times/week, daily+weekly timetables
+
+Water tracker unlocked
+
+Achievement section unlocked
+
+Projects/folders unlocked
+
+Premium Plan (₹497/month):
+
+AI planner: 7 times/week, all timetable types
+
+All analytics (daily, weekly, yearly)
+
+Merchandise store access
+
+Lucky spin access
+
+All features unlocked
+
+Lifetime Plan (₹5000 one-time):
+
+Unlimited everything but only one per ip-address (so many users won't be able to use with the single account)
+
+Permanent access to all features
+
+DESIGN REQUIREMENTS:
+Color Scheme:
+Modern, vibrant but professional palette
+
+Dopamine-releasing color psychology
+
+Dark/light mode support
+
+UI/UX Principles:
+Mobile-first responsive design
+
+Smooth animations and transitions
+
+Intuitive navigation
+
+Visual feedback for all interactions
+
+Progress indicators throughout
+
+Component Library:
+Custom Tailwind components
+
+Consistent design system
+
+Accessible and WCAG compliant
+
+FIREBASE CONFIGURATION:
+Authentication (Google + Email/Password)
+
+Firestore for user data, tasks, achievements
+
+Links for avatars.
+
+Security rules for data protection
+
+SPECIAL INSTRUCTIONS:
+Code Quality: Clean, modular, well-documented code
+
+Performance: Optimized loading and smooth interactions
+
+Security: Proper authentication and data validation
+
+Scalability: Architecture that supports future features
+
+Error Handling: Comprehensive error boundaries and user feedback
+
+Please generate the complete application structure, including all components, Firebase configuration, API integrations, and deployment setup. Provide detailed implementation for each feature with modern React patterns and best practices.
+
+And I am deploying on Vercel. Please also provide the project file structure.

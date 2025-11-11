@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Timora — AI Study Planner</title>
+  <meta name="description" content="Timora — AI-powered study planner with Pomodoro, coins, leaderboards, and an AI teacher. Plan. Focus. Reward." />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #8b5cf6;
+      --secondary: #ec4899;
+      --accent: #06b6d4;
+    }
+    body { font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    /* Decorative blurred orbs */
+    .orb { position: absolute; border-radius: 9999px; filter: blur(72px); opacity: .6; z-index: 0; pointer-events: none; }
+    /* Small helper for subtle glass backgrounds (kept minimal) */
+    .glass-soft { background: rgba(255,255,255,0.03); backdrop-filter: blur(8px); }
+  </style>
+</head>
+
+<body class="bg-gradient-to-b from-slate-900 via-slate-900 to-black text-white antialiased">
+
+  <!-- decorative orbs -->
+  <div class="orb" style="width:380px;height:380px;background:linear-gradient(135deg,var(--primary),var(--secondary)); top:-120px; left:-120px;"></div>
+  <div class="orb" style="width:460px;height:460px;background:linear-gradient(135deg,var(--secondary),#06b6d4); bottom:-160px; right:-160px; opacity:0.34;"></div>
+  <div class="orb" style="width:300px;height:300px;background:linear-gradient(135deg,var(--primary),#60a5fa); top:40%; left:50%; transform:translate(-30%,-40%); opacity:0.18;"></div>
+
+  <!-- NAV -->
+  <header class="fixed inset-x-0 top-0 z-40 bg-[rgba(7,10,20,0.6)] backdrop-blur border-b border-white/3">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <a href="/" class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] flex items-center justify-center shadow-lg">
+            <!-- logo SVG -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M3 7.5L12 3l9 4.5v9L12 21 3 16.5v-9z" fill="white" opacity="0.95" />
+              <path d="M12 3v18" stroke="white" stroke-opacity="0.06" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="font-bold text-lg tracking-tight">Timora</span>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="#features" class="text-slate-200 hover:text-white transition">Features</a>
+          <a href="#how" class="text-slate-200 hover:text-white transition">How it works</a>
+          <a href="#pricing" class="text-slate-200 hover:text-white transition">Pricing</a>
+          <a href="#faq" class="text-slate-200 hover:text-white transition">FAQ</a>
+          <a href="login.html" class="ml-3 inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-semibold shadow">Get Started
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="ml-1"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </nav>
+
+        <div class="md:hidden">
+          <button id="hamburgerBtn" aria-label="Open menu" class="p-2 rounded-xl glass-soft ring-1 ring-white/6">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- mobile slide menu -->
+    <div id="mobileMenu" class="fixed right-0 top-0 h-full w-72 bg-[rgba(6,8,15,0.9)] transform translate-x-full transition-transform z-50">
+      <div class="p-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)]"></div>
+            <span class="font-semibold">Timora</span>
+          </div>
+          <button id="mobileClose" class="text-2xl text-slate-300 hover:text-white">&times;</button>
+        </div>
+
+        <nav class="mt-8 flex flex-col gap-4">
+          <a href="#features" class="py-2 px-3 rounded hover:bg-white/5">Features</a>
+          <a href="#how" class="py-2 px-3 rounded hover:bg-white/5">How it works</a>
+          <a href="#pricing" class="py-2 px-3 rounded hover:bg-white/5">Pricing</a>
+          <a href="#faq" class="py-2 px-3 rounded hover:bg-white/5">FAQ</a>
+          <a href="login.html" class="mt-6 py-3 px-3 rounded bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-center">Get Started</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-24 relative z-10">
+
+    <!-- HERO -->
+    <section id="hero" class="min-h-screen flex items-center">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8 grid md:grid-cols-2 gap-16 items-center">
+        <!-- Left: copy -->
+        <div class="space-y-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[rgba(255,255,255,0.03)] text-sm text-slate-200">
+            <!-- Spark SVG -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-[var(--primary)]">
+              <path d="M12 2v20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span class="font-medium">Trusted by students</span>
+          </div>
+
+          <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]">Plan smarter.</span><br>
+            <span class="text-white">Study better.</span><br>
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]">Stay consistent.</span>
+          </h1>
+
+          <p class="text-lg text-slate-300 max-w-xl">
+            Timora blends AI timetables, focus tracking and rewards to make learning rewarding and repeatable. Generate tidy plans, focus with Pomodoro, and climb leaderboards.
+          </p>
+
+          <div class="flex flex-wrap gap-4">
+            <a href="login.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-semibold shadow">Get Started
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#features" class="px-6 py-3 rounded-2xl glass-soft text-slate-200 hover:bg-white/5 transition">Explore features</a>
+          </div>
+
+          <div class="flex items-center gap-8 pt-6">
+            <div>
+              <div class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]">50K+</div>
+              <div class="text-slate-400 text-sm">Study hours tracked</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]">98%</div>
+              <div class="text-slate-400 text-sm">Satisfaction rate</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]">4.9★</div>
+              <div class="text-slate-400 text-sm">User rating</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: preview card -->
+        <div class="relative">
+          <div class="rounded-3xl p-1 bg-gradient-to-br from-[rgba(139,92,246,0.15)] to-[rgba(236,72,153,0.12)]">
+            <div class="rounded-2xl overflow-hidden inner-gradient p-8 bg-[rgba(10,12,20,0.6)]">
+              <!-- Placeholder image (add your screenshot or illustration here) -->
+              <div class="w-full h-80 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg shadow-2xl flex items-center justify-center text-slate-400">
+                <!-- dashboard SVG placeholder -->
+                <svg width="220" height="140" viewBox="0 0 220 140" fill="none" aria-hidden="true">
+                  <rect x="4" y="8" width="212" height="124" rx="12" fill="#0b1220" stroke="rgba(255,255,255,0.04)"/>
+                  <rect x="20" y="24" width="80" height="20" rx="4" fill="rgba(255,255,255,0.03)"/>
+                  <rect x="20" y="56" width="170" height="60" rx="6" fill="rgba(255,255,255,0.02)"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- floating stat badges -->
+          <div class="absolute -bottom-6 -left-6 p-4 rounded-2xl glass-soft flex items-center gap-3 shadow-lg">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] flex items-center justify-center">
+              <!-- flame SVG -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3s4 2 4 6c0 4-4 6-4 12-4-6-4-8-4-10 0-4 4-8 4-8z" fill="white"/></svg>
+            </div>
+            <div>
+              <div class="text-xs text-slate-300 uppercase tracking-wide">Focus Streak</div>
+              <div class="font-semibold">21 days</div>
+            </div>
+          </div>
+
+          <div class="absolute -top-6 -right-6 p-4 rounded-2xl glass-soft text-center shadow-lg">
+            <div class="text-xs text-slate-300 uppercase tracking-wide">Coins Earned</div>
+            <div class="font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]">2,847</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="py-24">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-4xl font-extrabold">Six powerful features</h2>
+          <p class="text-slate-400 mt-3 max-w-2xl mx-auto">Plan, focus, and track progress with beautifully designed tools.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- Feature card: AI Planner -->
+          <article class="p-8 rounded-2xl glass-soft hover:translate-y-[-6px] transition-transform">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] mb-4 shadow-md">
+              <!-- planner SVG -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 3v4" stroke="white" stroke-width="1.5" stroke-linecap="round"/><rect x="3" y="7" width="18" height="14" rx="2" stroke="white" stroke-opacity="0.8" stroke-width="1.2"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">AI Study Planner</h3>
+            <p class="text-slate-300">Generate strict JSON timetables you can edit, import and export.</p>
+          </article>
+
+          <!-- Pomodoro -->
+          <article class="p-8 rounded-2xl glass-soft hover:translate-y-[-6px] transition-transform">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] mb-4 shadow-md">
+              <!-- timer SVG -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="8" stroke="white" stroke-opacity="0.9" stroke-width="1.2"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Pomodoro & Tasks</h3>
+            <p class="text-slate-300">Custom durations, auto-rotation, and session analytics.</p>
+          </article>
+
+          <!-- AI Teacher -->
+          <article class="p-8 rounded-2xl glass-soft hover:translate-y-[-6px] transition-transform">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] mb-4 shadow-md">
+              <!-- teacher/book SVG -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 6c0-1.1.9-2 2-2h14v14a2 2 0 0 1-2 2H8l-5-6V6z" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">AI Teacher</h3>
+            <p class="text-slate-300">Interactive lessons, quizzes and step-by-step explanations.</p>
+          </article>
+
+          <!-- Coins -->
+          <article class="p-8 rounded-2xl glass-soft hover:translate-y-[-6px] transition-transform">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] mb-4 shadow-md">
+              <!-- coin SVG -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7" stroke="white" stroke-width="1.2"/><path d="M9 12h6" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Coins & Rewards</h3>
+            <p class="text-slate-300">Daily rewards, lucky spins and merch redemption.</p>
+          </article>
+
+          <!-- Analytics -->
+          <article class="p-8 rounded-2xl glass-soft hover:translate-y-[-6px] transition-transform">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] mb-4 shadow-md">
+              <!-- chart SVG -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12h3v6H3zM10 8h3v10h-3zM17 4h3v14h-3z" fill="white"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Progress Analytics</h3>
+            <p class="text-slate-300">Track streaks, focus hours and completion trends.</p>
+          </article>
+
+          <!-- Community -->
+          <article class="p-8 rounded-2xl glass-soft hover:translate-y-[-6px] transition-transform">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] mb-4 shadow-md">
+              <!-- trophy SVG -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 3h8v3a4 4 0 0 1-4 4 4 4 0 0 1-4-4V3z" stroke="white" stroke-width="1.2"/><path d="M4 7h16v2a6 6 0 0 1-6 6h-4A6 6 0 0 1 4 9V7z" stroke="white" stroke-width="1.2"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Community Leagues</h3>
+            <p class="text-slate-300">Weekly leaderboards, promotions and league rewards.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how" class="py-24 bg-[rgba(255,255,255,0.02)]">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-extrabold mb-4">How it works</h2>
+        <p class="text-slate-400 max-w-2xl mx-auto mb-12">Three simple steps to better study habits</p>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="p-8 rounded-2xl glass-soft">
+            <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] mb-4 flex items-center justify-center text-xl font-bold shadow-lg">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M3 7h18M7 7v10" stroke="white" stroke-width="1.2"/></svg>
+            </div>
+            <h3 class="font-semibold mb-2">Plan with AI</h3>
+            <p class="text-slate-300">Tell Timora what to study and get a balanced schedule instantly.</p>
+          </div>
+
+          <div class="p-8 rounded-2xl glass-soft">
+            <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[var(--secondary)] to-[var(--accent)] mb-4 flex items-center justify-center text-xl font-bold shadow-lg">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 3" stroke="white" stroke-width="1.2"/><circle cx="12" cy="12" r="8" stroke="white" stroke-opacity="0.9" stroke-width="1.2"/></svg>
+            </div>
+            <h3 class="font-semibold mb-2">Focus Deeply</h3>
+            <p class="text-slate-300">Use Pomodoro sessions to keep attention sharp and avoid burnout.</p>
+          </div>
+
+          <div class="p-8 rounded-2xl glass-soft">
+            <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[var(--accent)] to-[var(--primary)] mb-4 flex items-center justify-center text-xl font-bold shadow-lg">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 3l4 7h-8l4-7z" stroke="white" stroke-width="1.2"/></svg>
+            </div>
+            <h3 class="font-semibold mb-2">Earn Rewards</h3>
+            <p class="text-slate-300">Consistency earns coins — redeem merch and climb leagues.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="py-24">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-extrabold mb-4">Simple Pricing</h2>
+        <p class="text-slate-400 mb-10">Start free. Upgrade when you want more AI power and features.</p>
+
+        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <!-- Free -->
+          <div class="p-8 rounded-2xl price-card glass-soft text-left">
+            <div class="text-sm text-slate-400 uppercase tracking-wide mb-2">Free</div>
+            <div class="text-3xl font-extrabold mb-2">₹0</div>
+            <p class="text-slate-300 mb-6">Perfect to start building a routine</p>
+            <ul class="space-y-3 text-slate-300 mb-6">
+              <li>• Basic AI timetables</li>
+              <li>• Pomodoro timer</li>
+              <li>• Limited AI queries</li>
+            </ul>
+            <a href="login.html" class="inline-block w-full py-3 rounded-2xl bg-[rgba(255,255,255,0.03)] text-white text-center">Get Started</a>
+          </div>
+
+          <!-- Standard (popular) -->
+          <div class="p-8 rounded-2xl price-card relative overflow-hidden border-2 border-[rgba(139,92,246,0.18)] text-left">
+            <div class="absolute top-4 right-4 px-3 py-1 rounded-full bg-[var(--primary)]/90 text-xs font-semibold">POPULAR</div>
+            <div class="text-sm gradient-text uppercase tracking-wide mb-2 font-semibold">Standard</div>
+            <div class="text-3xl font-extrabold mb-2">₹318 / mo</div>
+            <p class="text-slate-300 mb-6">For committed learners</p>
+            <ul class="space-y-3 text-slate-300 mb-6">
+              <li>• More AI timetables</li>
+              <li>• Advanced analytics</li>
+              <li>• Exports & Projects</li>
+              <li>• Lucky spin & merch access</li>
+            </ul>
+            <a href="login.html" class="inline-block w-full py-3 rounded-2xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white text-center font-semibold">Upgrade Now</a>
+          </div>
+
+          <!-- Premium -->
+          <div class="p-8 rounded-2xl price-card glass-soft text-left">
+            <div class="text-sm text-slate-400 uppercase tracking-wide mb-2">Premium</div>
+            <div class="text-3xl font-extrabold mb-2">₹497 / mo</div>
+            <p class="text-slate-300 mb-6">Full access & priority features</p>
+            <ul class="space-y-3 text-slate-300 mb-6">
+              <li>• Unlimited AI Planner</li>
+              <li>• Full AI Teacher access</li>
+              <li>• Priority support</li>
+            </ul>
+            <a href="login.html" class="inline-block w-full py-3 rounded-2xl bg-[rgba(255,255,255,0.03)] text-white text-center">Go Premium</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-24 bg-[rgba(255,255,255,0.02)]">
+      <div class="max-w-5xl mx-auto px-6 lg:px-8">
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-extrabold mb-2">FAQ</h2>
+          <p class="text-slate-400">Answers to common questions</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="p-6 rounded-2xl glass-soft">
+            <h4 class="font-semibold mb-2">Do I need to pay to start?</h4>
+            <p class="text-slate-300">No. Timora starts free with limited AI usage. Upgrade anytime.</p>
+          </div>
+
+          <div class="p-6 rounded-2xl glass-soft">
+            <h4 class="font-semibold mb-2">Is my data secure?</h4>
+            <p class="text-slate-300">Yes — Firebase handles authentication and secure storage.</p>
+          </div>
+
+          <div class="p-6 rounded-2xl glass-soft">
+            <h4 class="font-semibold mb-2">Can I export my plans?</h4>
+            <p class="text-slate-300">Yes — PDF/CSV export is available from the dashboard.</p>
+          </div>
+
+          <div class="p-6 rounded-2xl glass-soft">
+            <h4 class="font-semibold mb-2">Does AI Teacher cover all subjects?</h4>
+            <p class="text-slate-300">It supports a wide range of topics — academics, coding, languages and more.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-24">
+      <div class="max-w-4xl mx-auto px-6 lg:px-8 text-center">
+        <div class="p-1 rounded-3xl bg-gradient-to-br from-[rgba(139,92,246,0.12)] to-[rgba(236,72,153,0.08)]">
+          <div class="rounded-3xl inner-gradient p-12 bg-[rgba(6,8,15,0.6)]">
+            <h2 class="text-3xl font-extrabold mb-4">Ready to transform your study habits?</h2>
+            <p class="text-slate-400 mb-8">Join thousands of students already studying smarter with Timora.</p>
+            <div class="flex justify-center gap-4">
+              <a href="login.html" class="px-8 py-3 rounded-2xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-semibold">Start Free Today</a>
+              <a href="mailto:hello@timora.app" class="px-8 py-3 rounded-2xl glass-soft text-white font-semibold hover:bg-white/5 transition">Contact Sales</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-white/6">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] flex items-center justify-center shadow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 7.5L12 3l9 4.5v9L12 21 3 16.5v-9z" fill="white"/></svg>
+          </div>
+          <span class="font-semibold text-lg bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]">Timora</span>
+        </div>
+
+        <p class="text-slate-400 mb-6">For partnerships or inquiries: <a href="mailto:hello@timora.app" class="text-[var(--primary)] hover:text-[var(--secondary)]">hello@timora.app</a></p>
+        <p class="text-slate-500 text-sm">© <span id="year"></span> Timora • Built for focused learners worldwide</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Minimal JS for menu & anchor scroll & reveal -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const hamburger = document.getElementById('hamburgerBtn');
+    const menu = document.getElementById('mobileMenu');
+    const closeBtn = document.getElementById('mobileClose');
+
+    hamburger?.addEventListener('click', () => menu.style.transform = 'translateX(0)');
+    closeBtn?.addEventListener('click', () => menu.style.transform = 'translateX(100%)');
+    menu?.addEventListener('click', (e) => { if (e.target.tagName === 'A') menu.style.transform = 'translateX(100%)'; });
+
+    // Smooth-scrolling for anchors
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e){
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+
+    // Simple reveal for glass cards
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('translate-y-0', 'opacity-100');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.glass-soft, .price-card').forEach(el => {
+      el.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-700');
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

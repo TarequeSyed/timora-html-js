@@ -1,0 +1,164 @@
+So I am creating a really beautiful best features for productivity at one-place study planner AI-based application. So I would require you to give me a prompt to be put up into the ChatGPT or Claude so that they will be able to give me one of the best and beautiful web-based applications. So I will tell you some of its features:
+
+So first of all, there will be a landing page. So the landing page will be of 6 sections 
+and it will tell all the features about the website that we are building. 
+And it will be very beautiful and its color theme should be modern, right? 
+And it will have section names on top. So when we click it, it should scroll down to that section. 
+And also on mobile, instead of all those horizontal names, it should be a hamburger icon. 
+So when we click it, a vertical nav bar should slide from right to left in the right side. 
+And it will show all the section names and it will just work as normal. 
+Also in the nav bar, there will be a 'get started' or login or sign up button. 
+So when we click that button, it will redirect us to the login page. 
+So the login page, in that we can log in with Google and email and password. 
+So if I want to log in with email and password, I'll just type email and password. 
+It will send a verification link. I have to click that link and it will generate my account. 
+As I'm creating it from email and password, we'll need an avatar for the logo of our account. 
+So we can just use any website that we can seed and it will create a random avatar. 
+And for Google, it will just open the Google page. As we are using Firebase, we can just enable 
+Google sign in methods from there, right? And there it will not send a verification link or anything. 
+It will just directly log in and the logo I'm having on the Google account. 
+It will show the exact same on the dashboard. 
+Now coming to the dashboard, as soon as we sign up, only sign up, okay? As soon as we create an account, 
+10 coins will be added to our account, So basically, we are also creating a coin system here. 
+So in the dashboard, these features will be also there. 
+Pomodoro timer with to-do list. So on top, there will be three things, 
+1. Pomodoro focus -  so it will start a 25-minute timer with a start button. Short break, 5 minutes. Long break, 
+15 minutes. After every four focus sessions, the long break will start And in between, 
+short breaks will be there. Then Pomodoro settings to update and change its features will be also there. 
+So for example, if I want the long break to come after every two sessions, we can change it from the settings. 
+And if I want the short break to be of 10 minutes, we can change it from settings and so on...
+So all the changes I want to do should be able to do from the settings. 
+And Pomodoro stats will be also there. So it will contain the full history of what tasks we have completed, 
+what tasks are remaining or basically are pending. 
+That will be there in the Pomodoro stats. And yes, when we complete one hour of full focus, 
+like the 25 minutes I told you, after one hour is completed, it should add 10 points per hour, 
+In our coin system. Also, there will be a leaderboard. 
+So for example, as we are creating a new website, so imagine if my brother and I created an account. 
+So if I see on the leaderboard, I should see his name and who has got more points will be ranked on the top. 
+So on the leaderboard, every person's name and their amount of points will be visible. 
+That's it. And their logo on the left side of their name. 
+So on the leaderboard, we can see who's on top of us or below us. 
+Another interesting feature that we are adding in the dashboard will be the AI study planner. 
+So what we'll use OpenAI API and it will be trained for just timetable purpose. 
+Anything else it won't give an answer. 
+So response will just have timetable, It won't give a starting like, "OK, so here's your timetable..." 
+And then ending like, "so are you happy with it?..." No, we don't want that. 
+We directly want the timetable. And after it creates, 
+we have to basically format the timetable into blocks.
+So for example, if it tells that do this task from 10 a.m. to 11 a.m., 
+ So it will be in one like kind of box type. And under that box, there will be the next task, 
+like from 11 to 12. So we have to format this and all the boxes will be of different colors. 
+Very beautiful UI, like dopamine releasing UI. 
+And there will be an option to import the timetable generated from the AI into the Pomodoro task. 
+So, for example, it generated a whole timetable for me; So I can just import it and it will be directly 
+sent to the Pomodoro timer and all the tasks will be predetermined over there. 
+And we can choose if you want to auto start or stop timer according to timetable. 
+So, for example, if the first task is over, so first task will require 25 minutes; So after that 25 minutes, 
+the next task should automatically start or not. 
+This should be accessible via the user, in the settings and task history will be there.
+In task history: completed task, pending task, at what time was the task completed.
+And the AI generated timetable can be downloadable, So if you download it, it will be generated in a PDF, 
+very nice PDF. And before they export it into the Pomodoro task, they can edit it. So, for example, 
+if they don't want 10 am to 11 am, they want 10 am to 11:30 am, They can change it from here. 
+And now coming to the extra features: 
+Extra features will be first daily coin collection reward. 
+So, for example, as soon as they log in into the dashboard, a pop up will come. 
+So, for example, if it's my second day of coming to the dashboard, it will tell. Here, collect your 
+reward and one coin will be added to our coin system. 
+And one of the most interesting ones is after 40 hours of focus, 
+you get a lucky spin.In the lucky spin, you can earn like a lot of coins. 
+The maximum amount of coins you can earn is 100 coins. And the minimum is just 5.
+So after 40 hours of focus, you get a random amount of coin from a wheel. 
+And between 5 coins to 100 coins. And the main thing is, we don't want to give max coins.
+We will give only between 5-20 coins and add fomo, so the hand of the wheel will 
+move just right beside max. coin like 100 and 
+will stop at next coin i.e., in our range (5-20 coins).  
+hence, we will program that wheel. So specifically, they don't get more coins, 
+They should get the lower amount of coins. And the OG users like who are using it 
+from way before. For example, if they are visiting and using 
+our website too much, then they are loyal fanbase hence, 
+they get 30 to 40 coins monthly in lucky spin. 
+And they can collect it by that pop-up. That same one that appears in the daily coin 
+collection. 
+Also achievement section will be there. So there will be all the achievements like 
+10 hours focused, 20 hours focused, 50 hours focused and so on... .  and same for tasks completed and water drank. 
+All the imaginable achievements will be locked there. 
+And once you complete it, it will unlock and give you some coins. 
+Bigger the achievement, more the coins; Adjust the amount of coins per achievement accordingly
+and remember that we are using Firebase for everything. 
+And also there will be a water tracker. So for example,We drink normally two and a 
+half liters of water(even user can set the amount of water he/she want to drink that day and max amount of water that can b
+e drank is 3 litres, hence fix the max. amount to 3 so that user can't spam and get the achievements).
+so the user can add the like there will be eight glasses so user can take each of its glass 
+and the water will be added and the minimum achievement for water is 20 liters. 
+20 liters of water you will get around five coins you know.analytics will be also there.
+it will contain the focused total focus hours, the day streaks you are currently having, 
+the graph, estimated time to complete the current tasks and to-do tasks and the time passed 
+in the amount of time it took for you have been accessing our website 
+you know kind of like that and completed tasks that you have fully completed (also add the remaining if 
+there is any we forgot in the prompt)
+there will be another major feature it will be the projects section 
+so it is the main folder so inside it like we can add many pomodoros for the 
+same related topic you know so for example if I open a project for 
+science exhibition so there I can add the tasks and all of them 
+will be related to it and then achievement section 
+I'll explain more detailing so in achievements, when the user is accessing dashboard once or more than once in a day, count it as 1
+and if he is visits for 20 days straight and so on..., he will get achievement. 
+the numbers I'm telling you for achievements will get increasing ,so on hundred logins 
+you will get another achievement and so on.. just add many of them and number of hours studied 
+will be also there in achievement so if I same like that 20 hours of study 
+I'll get 10 coins; one hundred hours of study I'll get the achievement 
+but with more coins (adjust accordingly). something like that yeah and 
+the coins you have, will matter in the leaderboard. I will do in the leaderboard it will 
+contain leagues so the lowest one will be wood league, then stone leagues, 
+then iron leagues, then silver leagues, then gold leagues, then platinum leagues, 
+then diamond leagues, right? One league will be hosted for 7 days and if you are top 3, 
+you will be promoted to upper league and remaining one will be stuck on that league
+and they will have to try to get the most coins, to promote to next league, else they are stuck in the same league.
+Also, add the remaining time before ending of league. so every time you end up in the top three
+of the leaderboard you can go to the next league right after and when you successfully pass a 
+league you get and achievment & coins same like 20 coins or 10 or 15 coins something like that
+and if you don't end up passing in the top three you stay in the same league and the coins spent
+history all will be also be there so for example if I get one rupees for logging one coin for 
+logging, then in history it will be added that yeah one point was added to your account on this day
+on this time because you logged in right with reason also and also we want to add like a merch
+andise region kind of thing you can say so there for like 8,000 coins we will be selling diaries
+so if someone earns 8,000 coins we will be shipping them a diary nice diary a customized diary
+okay so you can add that. we also need to make an admin panel for ourselves, so we can see the
+we can take the orders over there. and while spending that it will also ask are you sure you
+want to spend and when he is confirmed then he has to write his address which i'll see in the 
+admin panel as well. 
+down to the final topic the pricing. in monthly the basic plan will be there for I think 150
+rupees yeah 150 rupees it will contain: so in the basic plan you will get the AI study planner
+but you can only access it three times a week then you can only generate one timetable per day
+and you cannot generate a weekly timetable or an yearly timetable and weekly analytics will be
+only there, so not yearly analytics you won't get yearly analytics on there and it will cost 150 rupees
+then there is also a free plan in free plan you get everything right you almost get everything
+but everything is just for one time right for example if I generated one AI timetable that's it
+you can't access it anymore if I start if I did one task on pomodoro task you can keep it to three
+to four tasks maximum then I can't add more tasks I can't add more sessions of focus I can't you
+know I yeah basically just everything but in a very very low limit so almost only one one price
+the ones that you think are cheap you can add three to four maximum.
+also in the standard plan you will get everything the same as basic plan but with more limits
+so for example ai study planner was there so you will get it's five times a week the AI study
+planner then you will also get the water tracker in standard you will get and you will unlock
+the achievement section in here right so the extra features will unlock only in paid plans so
+everything else than extra features you will only get one trial and all the extra features
+there is like zero zero trial on the free plan then standard yeah you will unlock water tracker
+you will unlock folder (that one with tasks and pomos of same topic).
+yes and in the premium plan you can unlock the merchandise section basically where you can spend
+the coin spend the points you will unlock the analytic section you will unlock the lucky spin
+section you gain acceess to AI study planner but seven times a week and you can generate weekly
+and yearly timetable you can see daily, weekly and yearly analytics.
+and also in the standard plan you can only generate daily and weekly timetables.
+in the basic only daily per day timetable in standard you can generate daily and weekly and 
+in the premium one you can generate all three yearly, monthly and daily. included as well.
+and the final thing is lifetime you basically get everything for your whole life everything unlimited which will be costed 5000 rupees one time.
+
+Pricing (Final):
+
+Free: 0 rupees
+Basic: 150 rupees.
+Standard: 320 rupees.
+Premium: 500 rupees.
+Lifetime: 5000 rupees.
