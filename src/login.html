@@ -272,7 +272,7 @@
           return;
         }
         showMessage('Login successful — redirecting...', 'success');
-        setTimeout(()=> window.location.href = '/src/dashboard.html', 900);
+        setTimeout(()=> window.location.href = 'dashboard.html', 900);
       } catch (err) {
         console.error(err);
         showMessage(err.message || 'Login error', 'error');
@@ -379,7 +379,7 @@
         }
         
         showMessage('Login successful — redirecting...', 'success');
-        setTimeout(()=> window.location.href = '/src/dashboard.html', 900);
+        setTimeout(()=> window.location.href = 'dashboard.html', 900);
       } catch (err) {
         console.error(err);
         showMessage(err.message || 'Google auth failed', 'error');
@@ -409,7 +409,7 @@
     // Redirect if already logged in and verified
     auth.onAuthStateChanged((user) => {
       if (user && user.emailVerified) {
-        window.location.href = '/src/dashboard.html';
+        window.location.href = 'dashboard.html';
       }
     });
   </script>

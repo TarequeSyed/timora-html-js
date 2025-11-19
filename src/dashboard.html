@@ -2,8 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=0.9" />
   <title>Timora — Dashboard</title>
+
+  <script type="module">
+  // Firebase SDK imports
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+  // Your Firebase config
+  const firebaseConfig = {
+      apiKey: "AIzaSyDsZ2luMQAqmnwk0y6-vJ1gzKkMd1NKFuc",
+      authDomain: "timora-2680a.firebaseapp.com",
+      projectId: "timora-2680a",
+      storageBucket: "timora-2680a.firebasestorage.app",
+      messagingSenderId: "1036436572315",
+      appId: "1:1036436572315:web:58b1ecb4cb84045aaa5e3e"
+    };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Make Firebase objects available globally
+  window.firebaseApp = app;
+  window.firebaseAuth = auth;
+  window.firebaseDB = db;
+</script>
+
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -109,10 +137,12 @@
     <aside id="sidebar" class="sidebar w-72 bg-white border-r border-gray-200 p-5 shadow-xl">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] flex items-center justify-center text-white font-extrabold shadow-lg pulse-glow">T</div>
+         <div id="profilePhoto" class="w-12 h-12 rounded-full"></div>
           <div>
             <div id="ui-username" class="font-semibold text-lg">Guest User</div>
             <div id="ui-email" class="text-xs text-slate-500">guest@example.com</div>
+            <!-- subscription status element required by dashboard-ui.js -->
+            <div id="subStatus" class="text-xs text-slate-400 mt-0.5">Free</div>
           </div>
         </div>
         <button id="closeSidebar" class="p-1 text-slate-400 hover:text-slate-700 text-2xl" title="Close sidebar">&times;</button>
@@ -143,6 +173,31 @@
           <svg class="w-5 h-5 text-violet-500" viewBox="0 0 24 24" fill="none"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/></svg>
           <span class="font-medium">Analytics</span>
         </button>
+
+        <!-- Leaderboard -->
+<button class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-300 flex items-center gap-3" data-section="leaderboard">
+  <svg class="w-5 h-5 text-amber-500" viewBox="0 0 24 24" fill="none">
+    <path d="M8 21v-6H4V3h16v12h-4v6l-4-3-4 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span class="font-medium">Leaderboard</span>
+</button>
+
+<!-- Merch Store -->
+<button class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-300 flex items-center gap-3" data-section="merch">
+  <svg class="w-5 h-5 text-pink-500" viewBox="0 0 24 24" fill="none">
+    <path d="M3 3h18l-2 10H5L3 3zm0 0l1.5 15h15L21 3H3z" stroke="currentColor" stroke-width="2"/>
+  </svg>
+  <span class="font-medium">Merch Store</span>
+</button>
+
+<!-- Subscription -->
+<button class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-300 flex items-center gap-3" data-section="subscription">
+  <svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none">
+    <path d="M12 3v18m9-9H3" stroke="currentColor" stroke-width="2"/>
+  </svg>
+  <span class="font-medium">Subscription</span>
+</button>
+
 
         <button class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-300 flex items-center gap-3" data-section="settings">
           <svg class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke="currentColor" stroke-width="2"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2"/></svg>
@@ -351,18 +406,38 @@
                   </div>
                 </div>
 
-                <!-- Controls -->
-                <div class="mt-12 flex items-center gap-4">
-                  <button id="pomStart" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105">
-                    Start Session
-                  </button>
-                  <button id="pomPause" class="p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-[var(--primary)] transition-all duration-300">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
-                  </button>
-                  <button id="pomReset" class="p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-red-400 transition-all duration-300">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  </button>
-                </div>
+               <!-- Pomodoro Controls -->
+<div class="mt-12 flex items-center gap-4">
+  <!-- Start Button -->
+  <button 
+    id="pomStart" 
+    class="px-8 py-4 rounded-2xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105">
+    Start Session
+  </button>
+
+  <!-- Pause/Resume Button -->
+  <button 
+    id="pomPause" 
+    class="p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-[var(--primary)] transition-all duration-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" 
+    title="Pause / Resume">
+    <svg id="pomPauseIcon" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+      <!-- Default pause icon -->
+      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+    </svg>
+  </button>
+
+  <!-- Reset Button -->
+  <button 
+    id="pomReset" 
+    class="p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-red-400 transition-all duration-300 flex items-center justify-center" 
+    title="Reset Timer">
+    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none">
+      <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
+        stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
 
                 <!-- Mode Selector -->
                 <div class="mt-8 flex gap-3">
@@ -479,9 +554,14 @@
                         <label class="block text-sm font-medium text-slate-700 mb-2">Days</label>
                         <input id="plannerDays" type="number" min="1" max="30" value="7" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[var(--primary)] transition-all" />
                       </div>
+                       <div>
+                      <label class="block text-sm font-medium text-slate-700 mb-2">Goals</label>
+                      <input id="plannerGoal" placeholder="Complete GOC..." class="w-79 px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[var(--primary)] focus:ring-2 focus:ring-purple-100 transition-all" />
+                    </div>
+                   
                     </div>
 
-                    <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+                    <button type="button" id="genAIPlan" class="w-full py-4 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
                       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" fill="currentColor"/></svg>
                       <span>Generate Plan</span>
                     </button>
@@ -688,48 +768,208 @@
           </div>
         </article>
 
-        <!-- WATER -->
-        <article id="sect-water" class="hidden section-card slide-in-up">
-          <div class="max-w-4xl mx-auto">
-            <div class="glass-card rounded-2xl p-8">
-              <h2 class="text-2xl font-bold mb-4">Water Tracker</h2>
-              <div class="grid grid-cols-8 gap-3" id="waterGrid">
-                <div class="cup border rounded-lg p-4 text-center cursor-pointer" data-index="0">1</div>
-                <div class="cup border rounded-lg p-4 text-center cursor-pointer" data-index="1">2</div>
-                <div class="cup border rounded-lg p-4 text-center cursor-pointer" data-index="2">3</div>
-                <div class="cup border rounded-lg p-4 text-center cursor-pointer" data-index="3">4</div>
-                <div class="cup border rounded-lg p-4 text-center cursor-pointer" data-index="4">5</div>
-                <div class="cup border rounded-lg p-4 text-center cursor-pointer" data-index="5">6</div>
-                <div class="cup border rounded-lg p-4 text-center cursor-pointer" data-index="6">7</div>
-                <div class="cup border rounded-lg p-4 text-center cursor-pointer" data-index="7">8</div>
-              </div>
-              <div class="mt-4 text-sm text-slate-500">Goal: <span id="waterGoal">3L</span></div>
-            </div>
-          </div>
-        </article>
+        <!-- LEADERBOARD -->
+<article id="sect-leaderboard" class="hidden section-card slide-in-up">
+  <div class="max-w-6xl mx-auto">
+    <div class="mb-8 text-center">
+      <h2 class="text-3xl font-bold text-slate-800 mb-2">Global Leaderboard</h2>
+      <p class="text-slate-500">See where you stand in your league</p>
+    </div>
 
-        <!-- SETTINGS -->
-        <article id="sect-settings" class="hidden section-card slide-in-up">
-          <div class="max-w-4xl mx-auto">
-            <div class="glass-card rounded-2xl p-8">
-              <h2 class="text-2xl font-bold mb-4">Settings</h2>
-              <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label class="text-sm text-slate-600">Display name</label>
-                  <input id="editName" class="mt-1 w-full rounded-md p-2 border" placeholder="Display name" />
-                </div>
-                <div>
-                  <label class="text-sm text-slate-600">Email</label>
-                  <input id="editEmail" class="mt-1 w-full rounded-md p-2 border" placeholder="Email" />
-                </div>
-                <div class="md:col-span-2 flex gap-2">
-                  <button id="saveProfileBtn" class="py-2 px-4 rounded bg-[var(--primary)] text-white">Save (local)</button>
-                  <button id="resetStateBtn" class="py-2 px-4 rounded bg-white/10">Reset demo</button>
-                </div>
-              </div>
-            </div>
+    <!-- League Info -->
+    <div class="glass-card rounded-2xl p-6 mb-6 flex items-center justify-between">
+      <div>
+        <h3 class="font-bold text-slate-800 text-lg">Current League</h3>
+        <p class="text-slate-500">Silver League • Ends in <span id="leagueTimer" class="font-semibold text-[var(--primary)]">5d 14h</span></p>
+      </div>
+      <div class="flex items-center gap-2 text-lg font-semibold text-slate-800">
+        <svg class="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+        Rank <span id="userRank">#17</span>
+      </div>
+    </div>
+
+    <!-- Leaderboard Table -->
+    <div class="glass-card rounded-2xl p-6 overflow-x-auto">
+      <table class="min-w-full text-left">
+        <thead class="text-slate-500 text-sm border-b">
+          <tr>
+            <th class="py-2 px-3">Rank</th>
+            <th class="py-2 px-3">User</th>
+            <th class="py-2 px-3">League</th>
+            <th class="py-2 px-3">Focus Hours</th>
+            <th class="py-2 px-3">Coins</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardTable" class="text-slate-700 font-medium">
+          <!-- JS dynamically injects here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+
+<!-- MERCH STORE -->
+<article id="sect-merch" class="hidden section-card slide-in-up">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-slate-800 mb-2">Timora Merch Store</h2>
+      <p class="text-slate-500">Exchange your coins for exclusive rewards</p>
+    </div>
+
+    <div id="merchGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Dynamically populated by merch.js -->
+    </div>
+  </div>
+</article>
+
+
+<!-- SUBSCRIPTION -->
+<article id="sect-subscription" class="hidden section-card slide-in-up">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-slate-800 mb-2">Choose Your Plan</h2>
+      <p class="text-slate-500">Unlock features, boost productivity, and go pro</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="glass-card rounded-2xl p-6 hover-lift border-t-4 border-slate-300">
+        <h3 class="font-bold text-xl mb-2">Free Plan</h3>
+        <p class="text-slate-500 text-sm mb-3">Basic Pomodoro & 1-time AI planner</p>
+        <p class="text-3xl font-bold mb-4">₹0</p>
+        <button class="subscribeBtn w-full bg-slate-800 text-white py-3 rounded-xl hover:scale-105 transition-all" data-plan="free">Get Started</button>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 hover-lift border-t-4 border-purple-400">
+        <h3 class="font-bold text-xl mb-2 text-[var(--primary)]">Standard</h3>
+        <p class="text-slate-500 text-sm mb-3">Full AI planner, analytics, water tracker</p>
+        <p class="text-3xl font-bold mb-4">₹318<span class="text-base text-slate-500">/month</span></p>
+        <button class="subscribeBtn w-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white py-3 rounded-xl hover:scale-105 transition-all" data-plan="standard">Subscribe</button>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 hover-lift border-t-4 border-yellow-400">
+        <h3 class="font-bold text-xl mb-2 text-yellow-600">Premium</h3>
+        <p class="text-slate-500 text-sm mb-3">Unlimited AI, lucky spin, merch access</p>
+        <p class="text-3xl font-bold mb-4">₹497<span class="text-base text-slate-500">/month</span></p>
+        <button class="subscribeBtn w-full bg-gradient-to-r from-yellow-500 to-amber-500 text-white py-3 rounded-xl hover:scale-105 transition-all" data-plan="premium">Go Premium</button>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- WATER TRACKER -->
+<article id="sect-water" class="hidden section-card slide-in-up">
+  <div class="max-w-4xl mx-auto">
+    <div class="glass-card rounded-2xl p-8 text-center">
+      <h2 class="text-3xl font-bold text-slate-800 mb-4">Hydration Tracker 💧</h2>
+      <p class="text-slate-500 mb-6">Stay hydrated and earn achievements!</p>
+
+      <div class="grid grid-cols-8 gap-3 justify-center mb-6" id="waterGrid">
+        <!-- 8 cups (static HTML) -->
+        <div class="cup border-2 border-slate-200 p-4 rounded-lg cursor-pointer hover:bg-gradient-to-br hover:from-blue-100 hover:to-cyan-100 transition-all" data-index="0"><span class="text-slate-700 font-semibold">1</span></div>
+        <div class="cup border-2 border-slate-200 p-4 rounded-lg cursor-pointer hover:bg-gradient-to-br hover:from-blue-100 hover:to-cyan-100 transition-all" data-index="1"><span class="text-slate-700 font-semibold">2</span></div>
+        <div class="cup border-2 border-slate-200 p-4 rounded-lg cursor-pointer hover:bg-gradient-to-br hover:from-blue-100 hover:to-cyan-100 transition-all" data-index="2"><span class="text-slate-700 font-semibold">3</span></div>
+        <div class="cup border-2 border-slate-200 p-4 rounded-lg cursor-pointer hover:bg-gradient-to-br hover:from-blue-100 hover:to-cyan-100 transition-all" data-index="3"><span class="text-slate-700 font-semibold">4</span></div>
+        <div class="cup border-2 border-slate-200 p-4 rounded-lg cursor-pointer hover:bg-gradient-to-br hover:from-blue-100 hover:to-cyan-100 transition-all" data-index="4"><span class="text-slate-700 font-semibold">5</span></div>
+        <div class="cup border-2 border-slate-200 p-4 rounded-lg cursor-pointer hover:bg-gradient-to-br hover:from-blue-100 hover:to-cyan-100 transition-all" data-index="5"><span class="text-slate-700 font-semibold">6</span></div>
+        <div class="cup border-2 border-slate-200 p-4 rounded-lg cursor-pointer hover:bg-gradient-to-br hover:from-blue-100 hover:to-cyan-100 transition-all" data-index="6"><span class="text-slate-700 font-semibold">7</span></div>
+        <div class="cup border-2 border-slate-200 p-4 rounded-lg cursor-pointer hover:bg-gradient-to-br hover:from-blue-100 hover:to-cyan-100 transition-all" data-index="7"><span class="text-slate-700 font-semibold">8</span></div>
+      </div>
+
+      <div class="text-sm text-slate-600">Goal: <span id="waterGoal" class="font-semibold text-[var(--primary)]">3L</span></div>
+      <div class="mt-3 text-xs text-slate-400" id="waterProgressText">0/8 cups completed</div>
+    </div>
+  </div>
+</article>
+
+
+      <!-- SETTINGS -->
+<article id="sect-settings" class="hidden section-card slide-in-up">
+  <div class="max-w-4xl mx-auto">
+    <div class="glass-card rounded-2xl p-8 space-y-8">
+      <h2 class="text-2xl font-bold mb-4">Settings</h2>
+
+      <!-- User Profile -->
+      <section>
+        <h3 class="text-lg font-semibold mb-3">Profile</h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="text-sm text-slate-600">Display Name</label>
+            <input id="editName" class="mt-1 w-full rounded-md p-2 border" placeholder="Display name" />
           </div>
-        </article>
+          <div>
+            <label class="text-sm text-slate-600">Email</label>
+            <input id="editEmail" class="mt-1 w-full rounded-md p-2 border" placeholder="Email" />
+          </div>
+        </div>
+      </section>
+
+      <hr class="border-t border-slate-200"/>
+
+      <!-- Pomodoro Settings -->
+      <section>
+        <h3 class="text-lg font-semibold mb-3">Pomodoro Settings</h3>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="text-sm text-slate-600">Focus Time (min)</label>
+            <input id="focusTimeInput" type="number" class="mt-1 w-full rounded-md p-2 border" min="1" max="120" />
+          </div>
+          <div>
+            <label class="text-sm text-slate-600">Short Break (min)</label>
+            <input id="shortBreakInput" type="number" class="mt-1 w-full rounded-md p-2 border" min="1" max="60" />
+          </div>
+          <div>
+            <label class="text-sm text-slate-600">Long Break (min)</label>
+            <input id="longBreakInput" type="number" class="mt-1 w-full rounded-md p-2 border" min="1" max="90" />
+          </div>
+        </div>
+      </section>
+
+      <hr class="border-t border-slate-200"/>
+
+      <!-- Sound Settings -->
+      <!-- Sound Settings -->
+<section>
+  <h3 class="text-lg font-semibold mb-3">Sound Settings</h3>
+
+  <label class="block text-sm text-slate-600 mb-1">Alert Sound</label>
+  <select id="soundSelect" class="w-full rounded-md p-2 border mb-3">
+    <option value="none">None</option>
+    <option value="kitchen-bell">Kitchen Bell</option>
+    <option value="digital-clock">Digital Clock</option>
+    <option value="soft-ding">Soft Ding</option>
+    <option value="chime">Chime</option>
+    <option value="custom">Custom Upload...</option>
+  </select>
+
+  <input type="file" id="soundFileInput" accept="audio/*" class="hidden w-full text-sm text-slate-600 border p-2 rounded-md" />
+  <p class="text-xs text-slate-500 mt-1">Choose from presets or upload your own MP3/WAV.</p>
+
+  <button id="testSoundBtn" class="mt-3 px-4 py-2 rounded-md bg-slate-800 text-white hover:bg-slate-700">
+    Test Sound 🔊
+  </button>
+</section>
+
+
+      <hr class="border-t border-slate-200"/>
+
+      <!-- Notifications -->
+      <section>
+        <h3 class="text-lg font-semibold mb-3">Notifications</h3>
+        <button id="notifToggle" class="px-4 py-2 rounded-md bg-slate-800 text-white hover:bg-slate-700">
+          Enable Notifications
+        </button>
+        <p class="text-xs text-slate-500 mt-2">Allow browser notifications for session updates</p>
+      </section>
+
+      <div class="flex gap-3 pt-6 border-t border-slate-200">
+        <button id="saveSettingsBtn" class="py-2 px-4 rounded bg-[var(--primary)] text-white">Save Settings</button>
+        <button id="resetStateBtn" class="py-2 px-4 rounded border">Reset All</button>
+      </div>
+    </div>
+  </div>
+</article>
+
 
       </div>
     </div>
@@ -749,16 +989,25 @@
     </div>
   </div>
 
-  <!-- load the working UI module -->
-  <script type="module" src="/src/js/dashboard-ui.js"></script>
 
-  <!-- tiny inline helpers to ensure nav initial state (safe fallback if JS module loads slowly) -->
+  <!-- Compatibility stubs & globals required by dashboard-ui.js (tiny, non-visual JS) -->
   <script>
-    // show overview by default (safe fallback)
-    document.addEventListener('DOMContentLoaded', () => {
-      const overview = document.getElementById('sect-overview');
-      if (overview) overview.classList.remove('hidden');
-    });
+    // Make sure dashboard-ui.js can reference some globals without throwing.
+    // These are minimal stubs — dashboard-ui.js will replace/overwrite as it queries DOM.
+    window.populateSubscriptions = window.populateSubscriptions || function(){ /* stub */ };
+    window.soundMap = window.soundMap || { chime: null, 'kitchen-bell': null, 'digital-clock': null, 'soft-ding': null };
+    // Provide element references expected by dashboard-ui.js earlier in the file.
+    window.pomStartBtn = document.getElementById('pomStart');
+    window.pomPauseBtn = document.getElementById('pomPause');
+    window.pomResetBtn = document.getElementById('pomReset');
+    window.pomPauseIcon = document.getElementById('pomPauseIcon');
+    // Expose play/pause/resume/stop test controls if present (dashboard-ui.js also queries these later)
+    window.playTestSoundBtn = document.getElementById('playTestSound');
+    window.pauseTestSoundBtn = document.getElementById('pauseTestSound');
+    window.resumeTestSoundBtn = document.getElementById('resumeTestSound');
+    window.stopTestSoundBtn = document.getElementById('stopTestSound');
   </script>
+
+<script type="module" src="js/dashboard-ui.js"></script>
 </body>
 </html>
